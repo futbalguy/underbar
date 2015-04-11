@@ -51,14 +51,13 @@
 
     if (Array.isArray(collection)) {
       for (var i = 0; i < collection.length; i++) {
-        iterator(collection[i], i, collection)
+        iterator(collection[i], i, collection);
       }
     } else {
       for (var key in collection) {
-        iterator(collection[key], key, collection)
+        iterator(collection[key], key, collection);
       }
     }
-    
   };
 
   // Returns the index at which value can be found in the array, or -1 if value
@@ -96,7 +95,9 @@
   _.reject = function(collection, test) {
     // TIP: see if you can re-use _.filter() here, without simply
     // copying code in and modifying it
-    return _.filter(collection, function(item) { return !test(item)});
+    return _.filter(collection, function(item) {
+      return !test(item);
+    });
 
   };
 
@@ -123,7 +124,7 @@
     var result = [];
 
     _.each(collection, function(item, index) {
-      var iteratedResult = iterator(item)
+      var iteratedResult = iterator(item);
       result.push(iteratedResult);
     });
 
@@ -151,19 +152,19 @@
   // Reduces an array or object to a single value by repetitively calling
   // iterator(accumulator, item) for each item. accumulator should be
   // the return value of the previous iterator call.
-  //  
+  //
   // You can pass in a starting value for the accumulator as the third argument
   // to reduce. If no starting value is passed, the first element is used as
   // the accumulator, and is never passed to the iterator. In other words, in
   // the case where a starting value is not passed, the iterator is not invoked
   // until the second element, with the first element as it's second argument.
-  //  
+  //
   // Example:
   //   var numbers = [1,2,3];
   //   var sum = _.reduce(numbers, function(total, number){
   //     return total + number;
   //   }, 0); // should be 6
-  //  
+  //
   //   var identity = _.reduce([5], function(total, number){
   //     return total + number * number;
   //   }); // should be 5, regardless of the iterator function passed in
@@ -184,8 +185,8 @@
     }
 
     _.each(collection,function(item,index) {
-      total = iterator(total, item)
-    })
+      total = iterator(total, item);
+    });
 
     return total;
   };
@@ -213,9 +214,9 @@
     return _.reduce(collection,
       function(wasFound, item) {
         if (wasFound) {
-          return (test(item)) ? true : false
+          return (test(item)) ? true : false;
         }
-        return false
+        return false;
       },
       true);
   };
@@ -227,18 +228,18 @@
 
     var test = iterator === undefined ? _.identity : iterator;
 
-    var result = false
+    var result = false;
 
     var someTest = function(item) {
       if (test(item)) {
-        result = true
+        result = true;
       }
-      return true
-    }
+      return true;
+    };
 
-    _.every(collection,someTest)
+    _.every(collection,someTest);
 
-    return result
+    return result;
 
   };
 
@@ -265,14 +266,14 @@ _.extend = function(obj) {
 
   for (var i = 1; i < arguments.length; i++) {
 
-    var someObject = arguments[i]
+    var someObject = arguments[i];
 
     for (var key in someObject) {
-      obj[key] = someObject[key]
+      obj[key] = someObject[key];
     }
   }
 
-  return obj
+  return obj;
 };
 
   // Like extend, but doesn't ever overwrite a key that already
@@ -281,16 +282,16 @@ _.extend = function(obj) {
 
     for (var i = 1; i < arguments.length; i++) {
 
-      var someObject = arguments[i]
+      var someObject = arguments[i];
 
       for (var key in someObject) {
         if (obj[key] === undefined) {
-          obj[key] = someObject[key]
+          obj[key] = someObject[key];
         }
       }
     }
 
-    return obj
+    return obj;
   };
 
 
@@ -335,13 +336,15 @@ _.extend = function(obj) {
   // instead if possible.
   _.memoize = function(func) {
 
-    var memorizedFuncs = []
+    var memorizedFuncs = [];
 
-    if (memorizedFuncs[func.apply(this.arguments)] === undefined) {
-      memorizedFuncs[func.apply(this.arguments)] = _.once(func.apply(this.arguments))
-    } 
+    return function() {
+      if (memorizedFuncs[arguments[0]] === undefined) {
+        memorizedFuncs[arguments[0]] = func.apply(this, arguments);
+      }
 
-    return memorizedFuncs[func.apply(this.arguments)]
+      return memorizedFuncs[arguments[0]];
+    };
 
   };
 
@@ -352,6 +355,16 @@ _.extend = function(obj) {
   // parameter. For example _.delay(someFunction, 500, 'a', 'b') will
   // call someFunction('a', 'b') after 500ms
   _.delay = function(func, wait) {
+
+    var parameters = [];
+    for (var i = 2; i < arguments.length; i++) {
+      parameters.push(arguments[i]);
+    }
+
+    function callback(){
+        func.apply(null,parameters);
+    }
+    setTimeout(callback, wait);
   };
 
 
@@ -366,6 +379,21 @@ _.extend = function(obj) {
   // input array. For a tip on how to make a copy of an array, see:
   // http://mdn.io/Array.prototype.slice
   _.shuffle = function(array) {
+
+    function getRandomInt(min, max) {
+     return Math.floor(Math.random() * (max - min)) + min;
+    }
+
+    var copy = array.slice();
+
+    function shuffle(o){ //v1.0
+      for(var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
+      return o;
+    }
+
+    shuffle(copy);
+
+    return copy;
   };
 
 
@@ -387,6 +415,7 @@ _.extend = function(obj) {
   // of that string. For example, _.sortBy(people, 'name') should sort
   // an array of people by their name.
   _.sortBy = function(collection, iterator) {
+
   };
 
   // Zip together two or more arrays with elements of the same index
