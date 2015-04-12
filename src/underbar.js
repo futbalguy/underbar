@@ -184,8 +184,8 @@
 
     }
 
-    _.each(collection,function(item,index) {
-      total = iterator(total, item);
+    _.each(collection,function(item,index,collection) {
+      total = iterator(total, item, index);
     });
 
     return total;
@@ -212,9 +212,9 @@
     var test = iterator === undefined ? _.identity : iterator;
 
     return _.reduce(collection,
-      function(wasFound, item) {
+      function(wasFound, item, index, collection) {
         if (wasFound) {
-          return (test(item)) ? true : false;
+          return (test(item,index,collection)) ? true : false;
         }
         return false;
       },
@@ -362,11 +362,10 @@ _.extend = function(obj) {
     }
 
     function callback(){
-        func.apply(null,parameters);
+      func.apply(null,parameters);
     }
     setTimeout(callback, wait);
   };
-
 
   /**
    * ADVANCED COLLECTION OPERATIONS
@@ -386,12 +385,20 @@ _.extend = function(obj) {
 
     var copy = array.slice();
 
-    function shuffle(o){ //v1.0
-      for(var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
-      return o;
+    function shuffle(array){
+      for(var j, x, i = array.length; i; j = getRandomInt(0,i), x = array[--i], array[i] = array[j], array[j] = x);
+        return array;
     }
 
-    shuffle(copy);
+    var arrayEquals = function(array1,array2) {
+      return array1.length == array2.length && _.every(array1,function(element, index) {
+       return element === array2[index];
+     });
+    };
+
+    while(arrayEquals(copy,array)) {
+      shuffle(copy);
+    }
 
     return copy;
   };
@@ -408,6 +415,13 @@ _.extend = function(obj) {
   // Calls the method named by functionOrKey on each value in the list.
   // Note: You will need to learn a bit about .apply to complete this.
   _.invoke = function(collection, functionOrKey, args) {
+
+    _.each(collection,function(value,key,collection) {
+      var result = value.functionOrKey.apply(this,args);
+      collection[key] = result;
+    });
+
+    return collection;
   };
 
   // Sort the object's values by a criterion produced by an iterator.
