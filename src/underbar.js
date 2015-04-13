@@ -396,7 +396,7 @@ _.extend = function(obj) {
      });
     };
 
-    while(arrayEquals(copy,array)) {
+    while(array.length >= 2 && arrayEquals(copy,array)) {
       shuffle(copy);
     }
 
